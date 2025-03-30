@@ -519,8 +519,9 @@ scheduler(void)
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
- 
-      min_vdl_process->state = RUNNING;
+
+        min_vdl_process->time_slice = BASE_SLICE;
+        min_vdl_process->state = RUNNING;
         c->proc = min_vdl_process;
         swtch(&c->context, &min_vdl_process->context);
 
