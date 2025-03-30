@@ -483,21 +483,6 @@ wait(uint64 addr)
 //  - swtch to start running that process.
 //  - eventually that process transfers control
 //    via swtch back to the scheduler.
-//            if(p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
-       /* p->state = RUNNING;
-        c->proc = p;
-        swtch(&c->context, &p->context);
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-        found = 1;
-      }
-      release(&p->lock);
-    }*/
 void
 scheduler(void)
 {
@@ -663,12 +648,15 @@ wakeup(void *chan)
       acquire(&p->lock);
       if(p->state == SLEEPING && p->chan == chan) {
         p->state = RUNNABLE;
+	p->vdeadline = p->vruntime + ( BASE_SLICE * (weight_table[20] / weight_table[p->nice]));
+	p->time_slice = BASE_SLICE;
       }
       release(&p->lock);
     }
   }
 
   update_avg_vruntime();
+
 }
 
 // Kill the process with the given pid.
