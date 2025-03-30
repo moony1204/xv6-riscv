@@ -887,6 +887,8 @@ void update_avg_vruntime(void){
       release(&p->lock);
     }
 
+  if (min_vruntime == MAX_INT) min_vruntime = 0;
+  
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if(p->state == RUNNABLE || p->state == RUNNING) {
